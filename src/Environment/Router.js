@@ -9,6 +9,7 @@ import Enroll from "../Component/Enroll";
 import Mypage from "../Component/Mypage";
 
 import Shop from "../Component/Shop";
+import ItemShop from "../Component/ItemShop";
 
 
 const Router = () => {
@@ -22,6 +23,7 @@ const Router = () => {
             <Route path="/community" element={<Community />} />
             <Route path="/enroll" element={<Enroll />} />
             <Route path="/mypage" element={<Mypage />} />
+            <Route path="/shop/item" element={<ItemShop />} />
         </Routes>
     )
 }

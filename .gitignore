@@ -10,7 +10,7 @@
 
 # production
 /build
-Environment/Firebase.js
+/Environment
 
 # misc
 .DS_Store
