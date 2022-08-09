@@ -10,7 +10,7 @@
 
 # production
 /build
-/Environment
+Environment/
 
 # misc
 .DS_Store

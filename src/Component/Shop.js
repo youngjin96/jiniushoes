@@ -68,7 +68,8 @@ const Shop = () => {
         navigate("/shop/item", {
             state: {
                 name: e.target.alt,
-                url: e.target.src
+                url: e.target.src,
+                price: e.target.id
             }
         });
     }
@@ -154,7 +155,7 @@ const Shop = () => {
                         {datas && datas.map((data) => (
                             <Grid key={data.name} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
                                 <Button onClick={onClickItem} style={{ padding: 0, width: "95%" }}>
-                                    <img src={data.url} alt={data.name} style={{ width: "100%", height: 300 }} />
+                                    <img src={data.url} alt={data.name} id={data.price} style={{ width: "100%", height: 300 }} />
                                 </Button>
                                 <Typography variant="subtitle2">
                                     {data.name}
