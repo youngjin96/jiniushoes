@@ -23,6 +23,8 @@ const Shop = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [datas, setDatas] = useState([]);
+    const [type, setType] = useState("");
+
     const [nikeOpen, setNikeOpen] = useState(false);
     const [adidasOpen, setAdidasOpen] = useState(false);
     const [newBalanceOpen, setNewBalanceOpen] = useState(false);
@@ -33,10 +35,14 @@ const Shop = () => {
 
     const onClickDunk = () => {
         datasArr = [];
+        setType("brands/nike/dunk");
         setIsLoading(true);
         getDocs(collection(db, "brands/nike/dunk")).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                datasArr.push(doc.data());
+                datasArr.push({
+                    id: doc.id,
+                    data: doc.data()
+                });
             });
             setDatas(datasArr);
             setIsLoading(false);
@@ -45,11 +51,17 @@ const Shop = () => {
 
     const onClickJordan = () => {
         datasArr = [];
+        setType("brands/nike/jordan");
+        setIsLoading(true);
         getDocs(collection(db, "brands/nike/jordan")).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                datasArr.push(doc.data());
+                datasArr.push({
+                    id: doc.id,
+                    data: doc.data()
+                });
             });
             setDatas(datasArr);
+            setIsLoading(false);
         });
     };
 
@@ -67,9 +79,8 @@ const Shop = () => {
     const onClickItem = (e) => {
         navigate("/shop/item", {
             state: {
-                name: e.target.alt,
-                url: e.target.src,
-                price: e.target.id
+                uid: e.target.alt,
+                collection: type
             }
         });
     }
@@ -152,16 +163,16 @@ const Shop = () => {
             <Grid item xs={10}>
                 {isLoading ? <IsLoading /> : (
                     <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
-                        {datas && datas.map((data) => (
-                            <Grid key={data.name} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
+                        {datas && datas.map((item, idx) => (
+                            <Grid key={idx} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
                                 <Button onClick={onClickItem} style={{ padding: 0, width: "95%" }}>
-                                    <img src={data.url} alt={data.name} id={data.price} style={{ width: "100%", height: 300 }} />
+                                    <img alt={item.id} src={item.data.url} style={{ width: "100%", height: 300 }} />
                                 </Button>
                                 <Typography variant="subtitle2">
-                                    {data.name}
+                                    {item.data.name}
                                 </Typography>
                                 <Typography variant="caption">
-                                    {data.price}원
+                                    {item.data.price}원
                                 </Typography>
                             </Grid>
                         ))}
