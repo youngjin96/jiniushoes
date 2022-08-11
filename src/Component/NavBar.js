@@ -17,7 +17,7 @@ import { auth } from '../Environment/Firebase'
 
 import { Link, useNavigate } from 'react-router-dom';
 
-const pages = ['Shop', 'Style'];
+const pages = ['Shop', 'Style', 'Admin'];
 
 const NavBar = () => {
     const [isLoggedIn, setIsLoggedIn ]= useState(false);
@@ -63,8 +63,9 @@ const NavBar = () => {
             alert(error.message);
         });
     }
+
     return (
-        <AppBar position="sticky" style={{ background: 'white', height: "auto" }}>
+        <AppBar position="relative" style={{ background: 'white', height: "auto" }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* 화면 줄기 전 홈 */}

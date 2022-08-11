@@ -8,6 +8,7 @@ import Style from "../Component/Style";
 import Enroll from "../Component/Enroll";
 import Mypage from "../Component/Mypage";
 import SuccessPayment from "../Component/SuccessPayment";
+import Admin from "../Component/Admin";
 
 import Shop from "../Component/Shop";
 import ItemShop from "../Component/ItemShop";
@@ -26,6 +27,7 @@ const Router = () => {
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/shop/item" element={<ItemShop />} />
             <Route path="/shop/item/successpayment" element={<SuccessPayment />} />
+            <Route path="/admin" element={<Admin />} />
         </Routes>
     )
 }
