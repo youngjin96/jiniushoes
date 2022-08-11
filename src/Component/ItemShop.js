@@ -7,12 +7,11 @@ import { useEffect, useState } from 'react';
 
 const ItemShop = () => {
     const location = useLocation();
-    const collection = location.state.collection;
     const uid = location.state.uid;
     const [shoesData, setShoesData] = useState();
     
     useEffect(() => {
-        getDoc(doc(db, collection, uid)).then((data) => {
+        getDoc(doc(db, "shoes", uid)).then((data) => {
             setShoesData(data.data());
         })
     }, []);
@@ -20,13 +19,13 @@ const ItemShop = () => {
     return (
         <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
             <Grid item xs={6} sx={{ justifyContent: "right", display: { xs: "none", sm: "none", lg: "flex" }, marginTop: 10 }}>
-                <img src={shoesData && shoesData.url} style={{ width: "70%", height: 600 }} />
+                <img src={shoesData && shoesData.img_url} style={{ width: "70%", height: 600 }} />
             </Grid>
             <Grid item xs={12} sx={{ display: { xs: "none", sm: "flex", lg: "none" }, marginTop: 5 }}>
-                <img src={shoesData && shoesData.url} style={{ width: "100%", height: 600 }} />
+                <img src={shoesData && shoesData.img_url} style={{ width: "100%", height: 600 }} />
             </Grid>
             <Grid item xs={12} sx={{ display: { xs: "flex", sm: "none", lg: "none" }, marginTop: 5 }}>
-                <img src={shoesData && shoesData.url} style={{ width: "100%", height: 600 }} />
+                <img src={shoesData && shoesData.img_url} style={{ width: "100%", height: 600 }} />
             </Grid>
 
             <Grid item xs={6} sx={{ textAlign: "center", display: { xs: "none", sm: "none", lg: "flex" }, marginTop: 10 }}>

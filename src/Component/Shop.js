@@ -10,20 +10,25 @@ import Collapse from '@mui/material/Collapse';
 
 import { useNavigate } from 'react-router-dom';
 
-import { collection, getDocs } from "firebase/firestore";
-import { useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 import { db } from "../Environment/Firebase";
 import IsLoading from "../Environment/IsLoading";
 
-var datasArr = [];
-
 const Shop = () => {
     const navigate = useNavigate();
 
+    useEffect(() => {
+        getDocs(collection(db, "lines")).then((data) => {
+            data.forEach((doc) => {
+                console.log(doc.data());
+            })
+        })
+    },[]);
+
     const [isLoading, setIsLoading] = useState(false);
     const [datas, setDatas] = useState([]);
-    const [type, setType] = useState("");
 
     const [nikeOpen, setNikeOpen] = useState(false);
     const [adidasOpen, setAdidasOpen] = useState(false);
@@ -34,10 +39,10 @@ const Shop = () => {
     };
 
     const onClickDunk = () => {
-        datasArr = [];
-        setType("brands/nike/dunk");
+        var datasArr = [];
         setIsLoading(true);
-        getDocs(collection(db, "brands/nike/dunk")).then((querySnapshot) => {
+        const q = query(collection(db, "shoes"), where("line_id", "==", "jSJvH8MXARJkpibDiZam"));
+        getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 datasArr.push({
                     id: doc.id,
@@ -50,8 +55,7 @@ const Shop = () => {
     };
 
     const onClickJordan = () => {
-        datasArr = [];
-        setType("brands/nike/jordan");
+        var datasArr = [];
         setIsLoading(true);
         getDocs(collection(db, "brands/nike/jordan")).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -79,8 +83,7 @@ const Shop = () => {
     const onClickItem = (e) => {
         navigate("/shop/item", {
             state: {
-                uid: e.target.alt,
-                collection: type
+                uid: e.target.alt
             }
         });
     }
@@ -166,7 +169,7 @@ const Shop = () => {
                         {datas && datas.map((item, idx) => (
                             <Grid key={idx} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
                                 <Button onClick={onClickItem} style={{ padding: 0, width: "95%" }}>
-                                    <img alt={item.id} src={item.data.url} style={{ width: "100%", height: 300 }} />
+                                    <img alt={item.id} src={item.data.img_url} style={{ width: "100%", height: 300 }} />
                                 </Button>
                                 <Typography variant="subtitle2">
                                     {item.data.name}

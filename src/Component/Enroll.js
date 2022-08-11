@@ -39,7 +39,7 @@ const Enroll = () => {
     const onClickEnroll = () => {
         createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
             try {
-                const docRef = await addDoc(collection(db, "clients"), {
+                const docRef = await addDoc(collection(db, "users"), {
                     email: email,
                     age: age,
                     gender: gender
