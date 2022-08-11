@@ -4,9 +4,10 @@ import Auth from "./Auth";
 import Home from "../Component/Home";
 import Profile from "../Component/Profile";
 import Login from "../Component/Login";
-import Community from "../Component/Community";
+import Style from "../Component/Style";
 import Enroll from "../Component/Enroll";
 import Mypage from "../Component/Mypage";
+import SuccessPayment from "../Component/SuccessPayment";
 
 import Shop from "../Component/Shop";
 import ItemShop from "../Component/ItemShop";
@@ -20,10 +21,11 @@ const Router = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/shop" element={<Shop />} />
-            <Route path="/community" element={<Community />} />
+            <Route path="/style" element={<Style />} />
             <Route path="/enroll" element={<Enroll />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/shop/item" element={<ItemShop />} />
+            <Route path="/shop/item/successpayment" element={<SuccessPayment />} />
         </Routes>
     )
 }

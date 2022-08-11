@@ -1,6 +1,6 @@
 
 
-const Community = () => {
+const Style = () => {
     return (
         <div>
             Community
@@ -8,4 +8,4 @@ const Community = () => {
     )
 }
 
-export default Community;
+export default Style;

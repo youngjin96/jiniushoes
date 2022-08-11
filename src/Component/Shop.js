@@ -20,12 +20,19 @@ const Shop = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getDocs(collection(db, "lines")).then((data) => {
+        var datasArr = [];
+        setIsLoading(true);
+        getDocs(collection(db, "shoes")).then((data) => {
             data.forEach((doc) => {
-                console.log(doc.data());
+                datasArr.push({
+                    id: doc.id,
+                    data: doc.data()
+                });
             })
+            setDatas(datasArr);
+            setIsLoading(false);
         })
-    },[]);
+    }, []);
 
     const [isLoading, setIsLoading] = useState(false);
     const [datas, setDatas] = useState([]);
@@ -57,7 +64,8 @@ const Shop = () => {
     const onClickJordan = () => {
         var datasArr = [];
         setIsLoading(true);
-        getDocs(collection(db, "brands/nike/jordan")).then((querySnapshot) => {
+        const q = query(collection(db, "shoes"), where("line_id", "==", "guqNwCVSiYkApjoiuirT"));
+        getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 datasArr.push({
                     id: doc.id,
@@ -81,13 +89,10 @@ const Shop = () => {
     }
 
     const onClickItem = (e) => {
-        navigate("/shop/item", {
-            state: {
-                uid: e.target.alt
-            }
-        });
+        sessionStorage.setItem("uid", e.target.alt);
+        navigate("/shop/item");
     }
-    
+
     return (
         <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
             <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'none', md: 'flex' } }}>
@@ -176,7 +181,7 @@ const Shop = () => {
                                 </Typography>
                                 <Typography variant="caption">
                                     {item.data.price}원
-                                </Typography>
+                                    </Typography>
                             </Grid>
                         ))}
                     </Grid>
