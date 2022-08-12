@@ -38,8 +38,7 @@ const Login = () => {
     }
 
     const onClickLogin = () => {
-        signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            const user = userCredential.user;
+        signInWithEmailAndPassword(auth, email, password).then(() => {
             navigate("/");
         }).catch(() => {
             Swal.fire({
