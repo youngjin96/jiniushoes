@@ -20,13 +20,14 @@ import Loading from "../Environment/IsLoading";
 const Enroll = () => {
     const navigate = useNavigate();
     const [isLoading, setIsloading] = useState(false);
+    const [openPostCode, setOpenPostCode] = useState(false);
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [nickName, setNickName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState("");
-    const [openPostCode, setOpenPostCode] = useState(false);
     const [postCode, setPostCode] = useState("");
     const [address, setAddress] = useState("");
     const [addressDetail, setAddressDetail] = useState("");
@@ -54,8 +55,6 @@ const Enroll = () => {
         clickButton: () => {
             setOpenPostCode(!openPostCode);
         },
-
-        // 주소 선택 이벤트
         selectAddress: (data) => {
             setAddress(data.address);
             setPostCode(data.zonecode);
@@ -78,10 +77,11 @@ const Enroll = () => {
             });
         } else {
             setIsloading(true);
-            createUserWithEmailAndPassword(auth, email, password).then(async () => {
+            createUserWithEmailAndPassword(auth, email, password).then(async (a) => {
                 try {
                     await addDoc(collection(db, "users"), {
                         type: "user",
+                        id: a._tokenResponse.localId,
                         email: email,
                         name: name,
                         nick_name: nickName,
@@ -90,11 +90,7 @@ const Enroll = () => {
                         post_code: postCode,
                         address: address,
                         address_details: addressDetail
-                    }).then((res) => {
-                        const userRef = doc(db, "users", res.id);
-                        updateDoc(userRef, {
-                            id: res.id
-                        });
+                    }).then(() => {
                         setIsloading(false);
                         Swal.fire({
                             icon: 'success',
