@@ -57,6 +57,7 @@ const NavBar = () => {
     }
 
     const onClickLogout = () => {
+        setAnchorElUser(null);
         signOut(auth).then(() => {
             navigate("/");
         }).catch((error) => {

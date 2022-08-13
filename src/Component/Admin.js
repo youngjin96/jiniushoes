@@ -2,7 +2,7 @@ import { Box, Grid, TextField, Button } from "@mui/material";
 import { useState } from "react";
 
 import { getApp } from "firebase/app";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // const storage = getStorage();
 // const storageRef = ref(storage, 'mountains.jpg');
@@ -23,9 +23,12 @@ const Admin = () => {
 
     const handlePdfFileChange = (e) => {
         const storage = getStorage();
-        const storageRef = ref(storage, "gs://jiniushoes.appspot.com/nike/dunk/name");
-        uploadBytes(storageRef, e.target.files[0]).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
+        const storageRef = ref(storage, "gs://jiniushoes.appspot.com/nike/dunk/" + name);
+        uploadBytes(storageRef, e.target.files[0]).then(() => {
+            getDownloadURL(storageRef).then((url) => {
+                console.log(url)
+                // TODO get imagae from storage to database
+            })
         });
     };
     return (
