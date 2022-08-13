@@ -22,6 +22,8 @@ const Enroll = () => {
     const [isLoading, setIsloading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [nickName, setNickName] = useState("");
     const [age, setAge] = useState("");
     const [gender, setGender] = useState("");
     const [openPostCode, setOpenPostCode] = useState(false);
@@ -35,6 +37,10 @@ const Enroll = () => {
             setEmail(value)
         } else if (name === "password") {
             setPassword(value)
+        } else if (name === "name") {
+            setName(value)
+        } else if (name === "nickName") {
+            setNickName(value)
         } else if (name === "age") {
             setAge(value)
         } else if (name === "gender") {
@@ -58,48 +64,11 @@ const Enroll = () => {
     };
 
     const onClickEnroll = () => {
-        setIsloading(true);
-        createUserWithEmailAndPassword(auth, email, password).then(async () => {
-            try {
-                await addDoc(collection(db, "users"), {
-                    email: email,
-                    age: age,
-                    gender: gender,
-                    type: "user",
-                    post_code: postCode,
-                    address: address,
-                    address_details: addressDetail
-                }).then((res) => {
-                    const userRef = doc(db, "users", res.id);
-                    updateDoc(userRef, {
-                        id: res.id
-                    });
-                    setIsloading(false);
-                    Swal.fire({
-                        icon: 'success',
-                        title: '회원가입 완료',
-                        html: '회원가입이 정상적으로 완료되었습니다.',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    }).then(() => {
-                        navigate("/");
-                    });
-                });
-            } catch (e) {
-                console.error("Error adding document: ", e);
-            }
-        }).catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            setIsloading(false);
+        if (!email || !password || !age || !gender || !postCode || !address || !addressDetail) {
             Swal.fire({
                 icon: 'error',
                 title: '회원가입 실패',
-                html: errorMessage,
+                html: "모두 작성해주세요.",
                 showClass: {
                     popup: 'animate__animated animate__fadeInDown'
                 },
@@ -107,8 +76,62 @@ const Enroll = () => {
                     popup: 'animate__animated animate__fadeOutUp'
                 }
             });
-        });
+        } else {
+            setIsloading(true);
+            createUserWithEmailAndPassword(auth, email, password).then(async () => {
+                try {
+                    await addDoc(collection(db, "users"), {
+                        type: "user",
+                        email: email,
+                        name: name,
+                        nick_name: nickName,
+                        age: age,
+                        gender: gender,
+                        post_code: postCode,
+                        address: address,
+                        address_details: addressDetail
+                    }).then((res) => {
+                        const userRef = doc(db, "users", res.id);
+                        updateDoc(userRef, {
+                            id: res.id
+                        });
+                        setIsloading(false);
+                        Swal.fire({
+                            icon: 'success',
+                            title: '회원가입 완료',
+                            html: '회원가입이 정상적으로 완료되었습니다.',
+                            showClass: {
+                                popup: 'animate__animated animate__fadeInDown'
+                            },
+                            hideClass: {
+                                popup: 'animate__animated animate__fadeOutUp'
+                            }
+                        }).then(() => {
+                            navigate("/");
+                        });
+                    });
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                }
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setIsloading(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: '회원가입 실패',
+                    html: errorMessage,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                });
+            });
+        }
     }
+
     if (isLoading) return <Loading />
 
     return (
@@ -159,6 +182,26 @@ const Enroll = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    name="name"
+                                    label="Name"
+                                    onChange={onChange}
+                                    variant="standard"
+                                    value={name}
+                                    style={{ width: 300, marginTop: 30 }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    name="nickName"
+                                    label="NickName"
+                                    onChange={onChange}
+                                    variant="standard"
+                                    value={nickName}
+                                    style={{ width: 300, marginTop: 30 }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
                                     name="age"
                                     label="Age"
                                     onChange={onChange}
@@ -166,6 +209,21 @@ const Enroll = () => {
                                     value={age}
                                     style={{ width: 300, marginTop: 30 }}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl style={{width: 300, marginTop: 50}}>
+                                    <InputLabel id="gender-label">Gender</InputLabel>
+                                    <Select
+                                        labelId="gender-label"
+                                        name="gender"
+                                        value={gender}
+                                        label="Gender"
+                                        onChange={onChange}
+                                    >
+                                        <MenuItem value={"Male"}>Male</MenuItem>
+                                        <MenuItem value={"Female"}>Female</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button variant="outlined" onClick={onClickSearchAddress.clickButton} style={{ width: 100, marginTop: 30, color:"black", borderColor: "black" }}>
@@ -199,21 +257,6 @@ const Enroll = () => {
                                     value={addressDetail}
                                     style={{ width: 300, marginTop: 2 }}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <FormControl style={{width: 300, marginTop: 50}}>
-                                    <InputLabel id="gender-label">Gender</InputLabel>
-                                    <Select
-                                        labelId="gender-label"
-                                        name="gender"
-                                        value={gender}
-                                        label="Gender"
-                                        onChange={onChange}
-                                    >
-                                        <MenuItem value={"Male"}>Male</MenuItem>
-                                        <MenuItem value={"Female"}>Female</MenuItem>
-                                    </Select>
-                                </FormControl>
                             </Grid>
                             <Grid item xs={12}>
                                 <Button
