@@ -55,6 +55,11 @@ const NavBar = () => {
         navigate("/mypage");
     }
 
+    const onClickShoppingBag = () => {
+        setAnchorElUser(null);
+        navigate("/shoppingBag");
+    }
+
     const onClickLogout = () => {
         setAnchorElUser(null);
         signOut(auth).then(() => {
@@ -65,7 +70,7 @@ const NavBar = () => {
     }
 
     return (
-        <AppBar position="relative" style={{ background: 'white', height: "auto" }}>
+        <AppBar position="sticky" style={{ background: 'white', height: "auto" }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* 화면 줄기 전 홈 */}
@@ -196,6 +201,11 @@ const NavBar = () => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+                            <MenuItem onClick={onClickShoppingBag}>
+                                <Typography variant="button">
+                                    장바구니
+                                </Typography>
+                            </MenuItem>
                             <MenuItem onClick={onClickMypage}>
                                 <Typography variant="button">
                                     마이페이지

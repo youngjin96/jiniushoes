@@ -38,7 +38,8 @@ const Login = () => {
     }
 
     const onClickLogin = () => {
-        signInWithEmailAndPassword(auth, email, password).then(() => {
+        signInWithEmailAndPassword(auth, email, password).then((res) => {
+            sessionStorage.setItem("uid", res._tokenResponse.localId);
             navigate("/");
         }).catch(() => {
             Swal.fire({

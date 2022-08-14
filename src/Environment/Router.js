@@ -12,6 +12,7 @@ import Admin from "../Component/Admin";
 
 import Shop from "../Component/Shop";
 import ItemShop from "../Component/ItemShop";
+import ShoppingBag from "../Component/ShoppingBag";
 
 
 const Router = () => {
@@ -28,6 +29,7 @@ const Router = () => {
             <Route path="/shop/item" element={<ItemShop />} />
             <Route path="/shop/item/successpayment" element={<SuccessPayment />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/shoppingBag" element={<ShoppingBag />} />
         </Routes>
     )
 }

@@ -5,7 +5,7 @@ import Footer from "./Component/Footer";
 function App() {
   return (
     <>
-      <NavBar style={{position: "fixed", zindex: 5}} />
+      <NavBar />
       <Router />
       <Footer />
     </>

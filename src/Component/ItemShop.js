@@ -1,27 +1,36 @@
 import { Grid, Typography, Button, Box } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import axios from "axios"
 
 import {db} from "../Environment/Firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from 'react';
+import { doc, getDoc, addDoc, collection } from "firebase/firestore";
+import { useEffect, useId, useState } from 'react';
 
 import IsLoading from "../Environment/IsLoading";
 import { ADMIN_KEY } from "../Environment/Kakao";
 
 const ItemShop = () => {
-    const uid = sessionStorage.getItem("uid");
+    const navigate = useNavigate();
+    const id = sessionStorage.getItem("uid");
+    const shoesId = sessionStorage.getItem("shoes_id");
     
     const [isLoading, setIsLoading] = useState(false);
     const [shoesData, setShoesData] = useState();
     
     useEffect(() => {
         setIsLoading(true);
-        getDoc(doc(db, "shoes", uid)).then((data) => {
+        getDoc(doc(db, "shoes", shoesId)).then((data) => {
             setShoesData(data.data());
             setIsLoading(false);
         });
     }, []);
+
+    const onClickBag = async () => {
+        await addDoc(collection(db, "carts"), {
+            id: id,
+            shoes_id: shoesId
+        })
+    }
 
     const onClickBuy = () => {
         const state = {
@@ -88,8 +97,11 @@ const ItemShop = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant="contained" onClick={onClickBuy}>
-                                    구매
+                                <Button variant="outlined" onClick={onClickBag} sx={{ width: 150, height: 50, borderColor: "black", color: "black" }}>
+                                    장바구니에 담기
+                                </Button>
+                                <Button variant="contained" onClick={onClickBuy} sx={{width: 200, padding: 0, marginLeft: 10}}>
+                                    <img src="/img/KakaoPay.png" style={{width: "100%", height: 50}}/>
                                 </Button>
                             </Grid>
                         </Grid>
@@ -107,8 +119,8 @@ const ItemShop = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant="contained" onClick={onClickBuy}>
-                                    구매
+                                <Button variant="contained" onClick={onClickBuy} sx={{width: 200, padding: 0}}>
+                                    <img src="/img/KakaoPay.png" style={{width: "100%", height: 50}}/>
                                 </Button>
                             </Grid>
                         </Grid>
@@ -126,8 +138,8 @@ const ItemShop = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button variant="contained" onClick={onClickBuy}>
-                                    구매
+                                <Button variant="contained" onClick={onClickBuy} sx={{width: 200, padding: 0}}>
+                                    <img src="/img/KakaoPay.png" style={{width: "100%", height: 50}}/>
                                 </Button>
                             </Grid>
                         </Grid>

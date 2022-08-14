@@ -8,6 +8,8 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Collapse from '@mui/material/Collapse';
 
+import StickyBox from "react-sticky-box";
+
 import { useNavigate } from 'react-router-dom';
 
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -120,13 +122,13 @@ const Shop = () => {
     }
 
     const onClickItem = (e) => {
-        sessionStorage.setItem("uid", e.target.alt);
+        sessionStorage.setItem("shoes_id", e.target.alt);
         navigate("/shop/item");
     }
 
     return (
-        <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
-            <Grid position="relative" item xs={2} sx={{ display: { xs: 'none', sm: 'none', lg: 'flex' } }}>
+        <Grid position="sticky" container columns={{ xs: 12, sm: 12, md: 12 }}>
+            <Grid item xs={2} sx={{ display: { xs: 'none', sm: 'none', lg: 'flex' } }}>
                 <Box sx={{ width: '100%', maxWidth: 360 }}>
                     <nav aria-label="main menu">
                         <List>
