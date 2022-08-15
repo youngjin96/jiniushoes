@@ -4,7 +4,7 @@ import axios from "axios"
 
 import {db} from "../Environment/Firebase";
 import { doc, getDoc, addDoc, collection } from "firebase/firestore";
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import IsLoading from "../Environment/IsLoading";
 import { ADMIN_KEY } from "../Environment/Kakao";
