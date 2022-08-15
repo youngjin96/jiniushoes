@@ -40,10 +40,20 @@ const ShoppingBag = () => {
 
     if (shoes) {
         shoes.map((item, idx) => {
-            console.log(idx + item);
+            console.log(item.img_url);
         })
         return (
-            <img alt={shoes[0].name} src={shoes[0].img_url} style={{ width: "100", height: 300 }} />
+            <Box>
+                <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
+                    {shoes.map((item, idx) => {
+                        return (
+                            <Grid key={idx} item xs={3}>
+                                <img alt={item.name} src={item.img_url} style={{ width: "100%", height: 300 }} />
+                            </Grid>
+                        )
+                    })}
+                </Grid>
+            </Box>
         )
     }
 }
