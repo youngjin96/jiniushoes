@@ -1,62 +1,56 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 
 
 import { collection, getDoc, getDocs, query, where, doc } from "firebase/firestore";
 import { db } from "../Environment/Firebase";
 import Loading from "../Environment/IsLoading";
+import { Suspense } from "react";
 
 const uid = sessionStorage.getItem("uid");
-var shoesDatas = [];
-console.log("mount");
 
 const ShoppingBag = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [shoes, setShoes] = useState();
-
-    const getShoesDatas = async () => {
-        shoesDatas = [];
-        const shoesIdQuery = query(collection(db, "carts"), where("id", "==", uid));
-        await getDocs(shoesIdQuery).then((querySnapshot) => {
-            querySnapshot.forEach(async (res1) => {
-                await getDoc(doc(db, "shoes", res1.data().shoes_id)).then(res2 => {
-                    shoesDatas.push(res2.data());
-                }).then(() => {
-                    setShoes(shoesDatas);
-                });
-            });
-        });
-        console.log("After setShoes");
-        setIsLoading(false);
-    }
+    const [shoesDatas, setShoesDatas] = useState([]);
 
     useEffect(() => {
-        console.log("useEffect");
-        getShoesDatas();
+        let arr = [];
+        const shoesIdQuery = query(collection(db, "carts"), where("id", "==", uid));
+        getDocs(shoesIdQuery).then((querySnapshot) => {
+            querySnapshot.forEach((res) => {
+                arr.push(res.data());
+            })
+        }).then(() => {
+            setShoesDatas(arr);
+        })
     }, []);
 
-    if (isLoading) return <Loading />
-
-
-    if (shoes) {
-        shoes.map((item, idx) => {
-            console.log(item.img_url);
-        })
+    if (shoesDatas) {
         return (
-            <Box>
-                <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
-                    {shoes.map((item, idx) => {
-                        return (
-                            <Grid key={idx} item xs={3}>
-                                <img alt={item.name} src={item.img_url} style={{ width: "100%", height: 300 }} />
-                            </Grid>
-                        )
-                    })}
+            <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
+                <Grid item xs={2}>
+
                 </Grid>
-            </Box>
+                <Grid item xs={8}>
+                    <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
+                        {shoesDatas.map((item, idx) => {
+                            return (
+                                <Grid key={idx} item xs={2}>
+                                    <img alt={item.name} src={item.img_url} style={{ width: "100%", height: 100 }} />
+                                </Grid>
+                            )
+                        })}
+                    </Grid>
+                </Grid>
+                <Grid item xs={2}>
+
+                </Grid>
+            </Grid>
         )
     }
-}
 
+    return (
+        <Loading />
+    )
+}
 
 export default ShoppingBag;

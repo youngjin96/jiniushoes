@@ -3,7 +3,7 @@
 const Style = () => {
     return (
         <div>
-            Community
+            style
         </div>
     )
 }

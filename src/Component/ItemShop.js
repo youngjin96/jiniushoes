@@ -28,7 +28,10 @@ const ItemShop = () => {
     const onClickBag = async () => {
         await addDoc(collection(db, "carts"), {
             id: id,
-            shoes_id: shoesId
+            shoes_id: shoesId,
+            name: shoesData.name,
+            price: shoesData.price,
+            img_url: shoesData.img_url
         })
     }
 
