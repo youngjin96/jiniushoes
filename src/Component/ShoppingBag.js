@@ -41,7 +41,7 @@ const ShoppingBag = () => {
     }
 
     const onClickRemove = () => {
-        
+        // TODO : Render and Remove data
     }
 
     if (shoesDatas) {
