@@ -70,7 +70,7 @@ const NavBar = () => {
     }
 
     return (
-        <AppBar position="sticky" style={{ background: 'white', height: "auto" }}>
+        <AppBar position="sticky" style={{ background: 'white', height: 80 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     {/* 화면 줄기 전 홈 */}

@@ -3,7 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import axios from "axios"
 
 import {db} from "../Environment/Firebase";
-import { doc, getDoc, addDoc, collection } from "firebase/firestore";
+import { doc, getDoc, addDoc, collection, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 
 import IsLoading from "../Environment/IsLoading";
@@ -15,6 +15,7 @@ const ItemShop = () => {
     const shoesId = sessionStorage.getItem("shoes_id");
     
     const [isLoading, setIsLoading] = useState(false);
+    const [docId, setDocId] = useState("");
     const [shoesData, setShoesData] = useState();
     
     useEffect(() => {
@@ -32,6 +33,10 @@ const ItemShop = () => {
             name: shoesData.name,
             price: shoesData.price,
             img_url: shoesData.img_url
+        }).then((res) => {
+            updateDoc(doc(db, "carts", res.id), {
+                doc_id: res.id
+            });
         })
     }
 
