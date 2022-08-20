@@ -7,6 +7,12 @@ import Divider from '@mui/material/Divider';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Collapse from '@mui/material/Collapse';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Checkbox from '@mui/material/Checkbox';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from '@mui/icons-material/Favorite';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -16,17 +22,27 @@ import { useEffect, useState } from "react";
 import { db } from "../Environment/Firebase";
 import IsLoading from "../Environment/IsLoading";
 
+let datasArr = [];
+
 const Shop = () => {
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [datas, setDatas] = useState([]);
+    const [cartArr, setCartArr] = useState([]);
+
+    const [nikeOpen, setNikeOpen] = useState(false);
+    const [adidasOpen, setAdidasOpen] = useState(false);
+    const [newBalanceOpen, setNewBalanceOpen] = useState(false);
 
     useEffect(() => {
-        var datasArr = [];
+        datasArr = [];
         setIsLoading(true);
         getDocs(collection(db, "shoes")).then((data) => {
             data.forEach((doc) => {
                 datasArr.push({
                     id: doc.id,
-                    data: doc.data()
+                    data: doc.data(),
+                    like: false
                 });
             })
             setDatas(datasArr);
@@ -34,15 +50,8 @@ const Shop = () => {
         })
     }, []);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [datas, setDatas] = useState([]);
-
-    const [nikeOpen, setNikeOpen] = useState(false);
-    const [adidasOpen, setAdidasOpen] = useState(false);
-    const [newBalanceOpen, setNewBalanceOpen] = useState(false);
-
     const onClickAll = () => {
-        var datasArr = [];
+        datasArr = [];
         setIsLoading(true);
         getDocs(collection(db, "shoes")).then((data) => {
             data.forEach((doc) => {
@@ -61,7 +70,7 @@ const Shop = () => {
     };
 
     const onClickDunk = () => {
-        var datasArr = [];
+        datasArr = [];
         setIsLoading(true);
         const q = query(collection(db, "shoes"), where("line_id", "==", "jSJvH8MXARJkpibDiZam"));
         getDocs(q).then((querySnapshot) => {
@@ -77,7 +86,7 @@ const Shop = () => {
     };
 
     const onClickJordan = () => {
-        var datasArr = [];
+        datasArr = [];
         setIsLoading(true);
         const q = query(collection(db, "shoes"), where("line_id", "==", "guqNwCVSiYkApjoiuirT"));
         getDocs(q).then((querySnapshot) => {
@@ -93,7 +102,7 @@ const Shop = () => {
     };
 
     const onClickAirForce = () => {
-        var datasArr = [];
+        datasArr = [];
         setIsLoading(true);
         const q = query(collection(db, "shoes"), where("line_id", "==", "NRyeJRWONfCcydKjsdSA"));
         getDocs(q).then((querySnapshot) => {
@@ -123,11 +132,25 @@ const Shop = () => {
         sessionStorage.setItem("shoes_id", e.target.alt);
         navigate("/shop/item");
     }
+    
+    const onChangeChecked = (event) => {
+        const newDatas = datas.map((item, idx) => {
+            if (parseInt(event.target.id) == idx) {
+                if (item.like === true){
+                    return { ...item, like : false}
+                } else {
+                    return { ...item, like : true}
+                }
+            }
+            return item;
+        });
+        setDatas(newDatas);
+    };
 
     return (
         <Grid container>
-            <Grid item xs={2} sm={2.5} md={2}>
-                <Box style={{top: 80, position: "sticky", width: '100%'}}>
+            <Grid item xs={2} sm={2.5} md={1.5}>
+                <Box style={{ top: 80, position: "sticky", width: '100%' }}>
                     <nav aria-label="main menu">
                         <List>
                             <ListItemButton onClick={onClickAll}>
@@ -207,9 +230,10 @@ const Shop = () => {
                 </Box>
             </Grid>
 
-            <Grid item xs={10} sm={7} md={8}>
+            <Grid item xs={10} sm={7} md={9}>
                 {isLoading ? <IsLoading /> : (
-                    <Grid container columns={{ xs: 12, sm: 12, md: 12 }}>
+                    <Grid container>
+                        {console.log(datas)}
                         {datas && datas.map((item, idx) => (
                             <Grid key={idx} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
                                 <Button onClick={onClickItem} style={{ padding: 0, width: "95%" }}>
@@ -217,18 +241,45 @@ const Shop = () => {
                                 </Button>
                                 <Typography variant="subtitle2">
                                     {item.data.name}
+                                    <Checkbox 
+                                        id={idx.toString()}
+                                        checked={item.like}
+                                        onChange={onChangeChecked}
+                                        icon={<FavoriteBorder />} 
+                                        checkedIcon={<Favorite />} 
+                                    />
                                 </Typography>
                                 <Typography variant="caption">
                                     {item.data.price}원
-                                        </Typography>
+                                </Typography>
                             </Grid>
                         ))}
                     </Grid>
                 )}
             </Grid>
 
-            <Grid item sm={2.5} md={2} sx={{ display: { xs: 'none', md: 'flex' } }}>
-
+            <Grid item xs={0} sm={2.5} md={1.5}>
+                <Box style={{top: 80, position: "sticky"}}>
+                    <Card style={{ width: "100%" }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                Shopping Cart
+                            </Typography>
+                            <Typography variant="h5" component="div">
+                                Order List
+                                <hr />
+                            </Typography>
+                            <Typography variant="body2">
+                                Nike Dunk Low Seoul
+                                <br />
+                                {'"a benevolent smile"'}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    </Card>
+                </Box>
             </Grid>
         </Grid>
     )
