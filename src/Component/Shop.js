@@ -16,13 +16,14 @@ import Favorite from '@mui/icons-material/Favorite';
 
 import { useNavigate } from 'react-router-dom';
 
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, deleteDoc, doc, addDoc, updateDoc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 import { db } from "../Environment/Firebase";
 import IsLoading from "../Environment/IsLoading";
 
 let datasArr = [];
+const uid = sessionStorage.getItem("uid");
 
 const Shop = () => {
     const navigate = useNavigate();
@@ -42,12 +43,29 @@ const Shop = () => {
                 datasArr.push({
                     id: doc.id,
                     data: doc.data(),
-                    like: false
+                    like: false,
+                    cart_id: ""
                 });
             })
-            setDatas(datasArr);
-            setIsLoading(false);
-        })
+        }).then(() => {
+            let cart = [];
+            const cartQuery = query(collection(db, "carts"), where("id", "==", uid));
+            getDocs(cartQuery).then((querySnapshot) => {
+                querySnapshot.forEach((res) => {
+                    cart.push(res.data());
+                    datasArr.map(item => {
+                        if (item.data.name === res.data().name) {
+                            item.like = true;
+                            item.cart_id = res.data().doc_id;
+                        }
+                    })
+                })
+            }).then(() => {
+                setCartArr(cart);
+                setDatas(datasArr);
+                setIsLoading(false)
+            })
+        });
     }, []);
 
     const onClickAll = () => {
@@ -132,18 +150,41 @@ const Shop = () => {
         sessionStorage.setItem("shoes_id", e.target.alt);
         navigate("/shop/item");
     }
-    
+
     const onChangeChecked = (event) => {
         const newDatas = datas.map((item, idx) => {
             if (parseInt(event.target.id) == idx) {
-                if (item.like === true){
-                    return { ...item, like : false}
+                if (item.like === true) {
+                    let docId = "";
+                    setCartArr(cartArr.filter(i => i.name !== item.data.name));
+                    const q = query(collection(db, "carts"), where("id", "==", uid), where("name", "==", item.data.name));
+                    getDocs(q).then((querySnapshot) => {
+                        querySnapshot.forEach((doc) => {
+                            docId = doc.id;
+                        })   
+                    }).then(() => {
+                        deleteDoc(doc(db, "carts", docId));
+                    });
+                    return { ...item, like: false }
                 } else {
-                    return { ...item, like : true}
+                    setCartArr(old => [...old, {name: item.data.name}])
+                    addDoc(collection(db, "carts"), {
+                        id: uid,
+                        shoes_id: item.id,
+                        name: item.data.name,
+                        price: item.data.price,
+                        img_url: item.data.img_url
+                    }).then((res) => {
+                        updateDoc(doc(db, "carts", res.id), {
+                            doc_id: res.id
+                        });
+                    })
+                    return { ...item, like: true }
                 }
             }
             return item;
         });
+        console.log(newDatas);
         setDatas(newDatas);
     };
 
@@ -230,7 +271,7 @@ const Shop = () => {
                 </Box>
             </Grid>
 
-            <Grid item xs={10} sm={7} md={9}>
+            <Grid item xs={10} sm={7} md={8}>
                 {isLoading ? <IsLoading /> : (
                     <Grid container>
                         {console.log(datas)}
@@ -241,12 +282,12 @@ const Shop = () => {
                                 </Button>
                                 <Typography variant="subtitle2">
                                     {item.data.name}
-                                    <Checkbox 
+                                    <Checkbox
                                         id={idx.toString()}
                                         checked={item.like}
                                         onChange={onChangeChecked}
-                                        icon={<FavoriteBorder />} 
-                                        checkedIcon={<Favorite />} 
+                                        icon={<FavoriteBorder />}
+                                        checkedIcon={<Favorite />}
                                     />
                                 </Typography>
                                 <Typography variant="caption">
@@ -258,8 +299,8 @@ const Shop = () => {
                 )}
             </Grid>
 
-            <Grid item xs={0} sm={2.5} md={1.5}>
-                <Box style={{top: 80, position: "sticky"}}>
+            <Grid item xs={0} sm={2.5} md={2.5}>
+                <Box style={{ top: 80, position: "sticky" }}>
                     <Card style={{ width: "100%" }}>
                         <CardContent>
                             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -269,14 +310,17 @@ const Shop = () => {
                                 Order List
                                 <hr />
                             </Typography>
-                            <Typography variant="body2">
-                                Nike Dunk Low Seoul
-                                <br />
-                                {'"a benevolent smile"'}
-                            </Typography>
+                            {cartArr && cartArr.map((item, idx) => {
+                                return (
+                                    <Typography key={idx} variant="body2">
+                                        {item.name}
+                                        <br />
+                                    </Typography>
+                                )
+                            })}
                         </CardContent>
                         <CardActions>
-                            <Button size="small">Learn More</Button>
+                            <Button variant="contained" style={{ backgroundColor: "black", color: "white", width: "100%" }}>구매</Button>
                         </CardActions>
                     </Card>
                 </Box>
