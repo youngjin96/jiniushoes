@@ -74,6 +74,7 @@ const ItemShop = () => {
             const { data: { next_redirect_pc_url, tid } } = response;
             state.next_redirect_pc_url = next_redirect_pc_url;
             state.tid = tid;
+            sessionStorage.setItem("tid", tid);
             window.location.href = next_redirect_pc_url;
         });
     }

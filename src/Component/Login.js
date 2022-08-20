@@ -11,7 +11,7 @@ import Swal from 'sweetalert2'
 import { KAKAO_AUTH_URL } from "../Environment/Kakao";
 import { auth } from "../Environment/Firebase";
 
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -38,22 +38,24 @@ const Login = () => {
     }
 
     const onClickLogin = () => {
-        signInWithEmailAndPassword(auth, email, password).then((res) => {
-            sessionStorage.setItem("uid", res._tokenResponse.localId);
-            navigate("/");
-        }).catch(() => {
-            Swal.fire({
-                icon: 'error',
-                title: '로그인 실패',
-                html: "이메일 혹은 비밀번호를 확인해주세요.",
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
-                }
+        setPersistence(auth, browserSessionPersistence).then(() => {
+            signInWithEmailAndPassword(auth, email, password).then((res) => {
+                sessionStorage.setItem("uid", res._tokenResponse.localId);
+                navigate("/");
+            }).catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: '로그인 실패',
+                    html: "이메일 혹은 비밀번호를 확인해주세요.",
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                });
             });
-        });
+        })
     }
 
     const onClickGoogle = () => {
