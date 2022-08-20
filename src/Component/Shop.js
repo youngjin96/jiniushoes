@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Grid, Button, Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -14,10 +16,13 @@ import Checkbox from '@mui/material/Checkbox';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 
+import axios from "axios"
+
 import { useNavigate } from 'react-router-dom';
 
-import { collection, getDocs, query, where, deleteDoc, doc, addDoc, updateDoc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { collection, getDocs, query, where, deleteDoc, doc, addDoc, updateDoc } from "firebase/firestore";
+
+import { ADMIN_KEY } from "../Environment/Kakao";
 
 import { db } from "../Environment/Firebase";
 import IsLoading from "../Environment/IsLoading";
@@ -167,7 +172,7 @@ const Shop = () => {
                     });
                     return { ...item, like: false }
                 } else {
-                    setCartArr(old => [...old, {name: item.data.name}])
+                    setCartArr(old => [...old, {name: item.data.name, price: item.data.price}])
                     addDoc(collection(db, "carts"), {
                         id: uid,
                         shoes_id: item.id,
@@ -184,9 +189,53 @@ const Shop = () => {
             }
             return item;
         });
-        console.log(newDatas);
         setDatas(newDatas);
     };
+
+    const onClickBuy = () => {
+        let price = 0;
+        let quantity = 0;
+        cartArr.forEach(item => {
+            price += parseInt(item.price);
+            quantity += 1;
+        })
+        
+        const state = {
+            // 응답에서 가져올 값들
+            next_redirect_pc_url: "",
+            tid: "",
+            // 요청에 넘겨줄 매개변수들
+            params: {
+              cid: "TC0ONETIME",
+              partner_order_id: "partner_order_id",
+              partner_user_id: "partner_user_id",
+              item_name: "상품 결제",
+              quantity: quantity,
+              total_amount: price,
+              vat_amount: 0,
+              tax_free_amount: 0,
+              approval_url: "http://localhost:3000/shop/item/successpayment",
+              fail_url: "http://localhost:3000/shop",
+              cancel_url: "http://localhost:3000/shop",
+            },
+        };
+        const { params } = state;
+        
+        axios({
+            url: "https://kapi.kakao.com/v1/payment/ready",
+            method: "POST",
+            headers: {
+              Authorization: `KakaoAK ${ADMIN_KEY}`,
+              "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+            },
+            params,
+        }).then((response) => {
+            const { data: { next_redirect_pc_url, tid } } = response;
+            state.next_redirect_pc_url = next_redirect_pc_url;
+            state.tid = tid;
+            window.location.href = next_redirect_pc_url;
+        });
+    }
 
     return (
         <Grid container>
@@ -274,7 +323,6 @@ const Shop = () => {
             <Grid item xs={10} sm={7} md={8}>
                 {isLoading ? <IsLoading /> : (
                     <Grid container>
-                        {console.log(datas)}
                         {datas && datas.map((item, idx) => (
                             <Grid key={idx} item xs={12} sm={6} md={4} style={{ textAlign: "center", marginTop: 20 }}>
                                 <Button onClick={onClickItem} style={{ padding: 0, width: "95%" }}>
@@ -312,15 +360,19 @@ const Shop = () => {
                             </Typography>
                             {cartArr && cartArr.map((item, idx) => {
                                 return (
-                                    <Typography key={idx} variant="body2">
-                                        {item.name}
-                                        <br />
-                                    </Typography>
+                                    <Grid container key={idx}>
+                                        <Grid item xs={9}>
+                                            {item.name}
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            {item.price}원
+                                        </Grid>
+                                    </Grid>
                                 )
                             })}
                         </CardContent>
                         <CardActions>
-                            <Button variant="contained" style={{ backgroundColor: "black", color: "white", width: "100%" }}>구매</Button>
+                            <Button variant="contained" onClick={onClickBuy} style={{ backgroundColor: "black", color: "white", width: "100%" }}>구매</Button>
                         </CardActions>
                     </Card>
                 </Box>

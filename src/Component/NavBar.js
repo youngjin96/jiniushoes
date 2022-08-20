@@ -16,7 +16,7 @@ import { auth } from '../Environment/Firebase'
 
 import { Link, useNavigate } from 'react-router-dom';
 
-const pages = ['Shop', 'Style', 'Admin'];
+const pages = ['Shop'];
 
 const NavBar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
